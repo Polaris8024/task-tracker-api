@@ -1,20 +1,21 @@
+
 import express from "express";
 import { logger } from "./middleware/logger.js";
-import resourcesRouter from "./routes/resources.js";
+import itemsRouter from "./routes/items.js";
 
 const app = express();
 const PORT = 3000;
 
-// Parse incoming JSON
-app.use(express.json());
-
-// Log every request
+// Log incoming requests
 app.use(logger);
 
-// Connect the resource routes
-app.use("/api/resources", resourcesRouter); //tells express that whenever a request begins with /api/resources, send it to the router defined in resources.js.
+// Parse JSON request bodies
+app.use(express.json());
 
-// Catch invalid routes
+// Connect PostgreSQL-backed routes
+app.use("/api/items", itemsRouter);
+
+// Handle unknown routes
 app.use((req, res) => {
     res.status(404).json({
         error: "Route not found"
@@ -36,7 +37,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
